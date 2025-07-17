@@ -14,11 +14,11 @@
 #include "video_sf2000.h"
 
 // Hotkeys
-#define HOTKEYSAVESRM 0x9008 // press L + R + Start
-#define HOTKEYSAVESTATE 0x9400 // press L + R + X
-#define HOTKEYLOADSTATE 0x9800 // press L + R + Y
-#define HOTKEYINCREASESTATE 0x9020 // press L + R + Right
-#define HOTKEYDECREASESTATE 0x9080 // press L + R + LEFT
+#define HOTKEYSAVESRM 9224 // press L + R + Start
+#define HOTKEYSAVESTATE 11264 // press L + R + X
+#define HOTKEYLOADSTATE 13312 // press L + R + Y
+#define HOTKEYINCREASESTATE 9248 // press L + R + Right
+#define HOTKEYDECREASESTATE 9344 // press L + R + LEFT
 
 #define MAXPATH 	255
 #define SYSTEM_DIRECTORY	"/mnt/sda1/bios"
@@ -70,9 +70,9 @@ static bool g_osd_small_messages = false;
 
 static void dummy_retro_run(void);
 
-static int *fw_fps_counter_enable = (int *)0x80c0b5e0;
-static int *fw_fps_counter = (int *)0x80c0b5dc;
-static char *fw_fps_counter_format = (int *)0x8099bdf0;	// "%2d/%2d"
+static int *fw_fps_counter_enable = (int *)0x80be7848;
+static int *fw_fps_counter = (int *)0x80be7840;
+static char *fw_fps_counter_format = (int *)0x809a21a8;	// "%2d/%2d"
 static void fps_counter_enable(bool enable);
 
 static bool gb_temporary_osd = false;

@@ -205,8 +205,8 @@ static void restore_stock_gp()
 	// set $gp to the original stock's value like is done at 0x80001274 where $gp is
 	// initially set by the stock startup code
 	asm(
-        "lui	$gp, 0x80c1				\n"
-        "addiu	$gp, $gp, 0x14f4		\n"
+        "lui	$gp, 0x80bf				\n"
+        "addiu	$gp, $gp, -0x288c		\n"
     );
 }
 

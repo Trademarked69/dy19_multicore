@@ -136,7 +136,7 @@ libretro-common.a: libretro-common
 
 core.elf: libretro_core.a libretro-common.a $(CORE_OBJS)
 	@$(call echo_i,"compiling $@")
-	$(CXX) -Wl,-Map=$@.map $(CXX_LDFLAGS) -e __core_entry__ -Tcore.ld bisrv_08_03-core.ld -o $@ \
+	$(CXX) -Wl,-Map=$@.map $(CXX_LDFLAGS) -e __core_entry__ -Tcore.ld bisrv_DY19-core.ld -o $@ \
 		-Wl,--start-group $(CORE_OBJS) libretro_core.a libretro-common.a -lc -Wl,--end-group
 
 core_87000000: core.elf
@@ -144,7 +144,7 @@ core_87000000: core.elf
 
 loader.elf: $(LOADER_OBJS)
 	@$(call echo_i,"compiling $@")
-	$(LD) -Map $@.map $(LDFLAGS) -e __start -Ttext=$(LOADER_ADDR) bisrv_08_03.ld $(LOADER_OBJS) -o loader.elf
+	$(LD) -Map $@.map $(LDFLAGS) -e __start -Ttext=$(LOADER_ADDR) bisrv_DY19.ld $(LOADER_OBJS) -o loader.elf
 
 loader.bin: loader.elf
 	$(Q)$(OBJCOPY) -O binary -j .text -j .rodata -j .data loader.elf loader.bin
@@ -170,7 +170,7 @@ bisrv.asd: loader.bin lcd_font.bin crc
 		exit 1; \
 	fi
 
-	$(Q)cp bisrv_08_03.asd bisrv.asd
+	$(Q)cp bisrv_DY19_to_SF2000_918Mhz.asd bisrv.asd
 
 	$(Q)dd if=loader.bin of=bisrv.asd bs=$$(($(LOADER_OFFSET))) seek=1 conv=notrunc 2>/dev/null
 
@@ -178,7 +178,7 @@ bisrv.asd: loader.bin lcd_font.bin crc
 
 	# note: this patch must match $(LOADER_ADDR)
 	# jal run_gba -> jal 0x80001500
-	printf "\x40\x05\x00\x0C" | dd of=bisrv.asd bs=1 seek=$$((0x35a900)) conv=notrunc
+	printf "\x40\x05\x00\x0C" | dd of=bisrv.asd bs=1 seek=$$((0x35f580)) conv=notrunc
 
 	# endless loop in sys_watchdog_reboot -> j 0x80001508
 	printf "\x42\x05\x00\x08" | dd of=bisrv.asd bs=1 seek=$$((0x30d4)) conv=notrunc
@@ -187,7 +187,10 @@ bisrv.asd: loader.bin lcd_font.bin crc
 
 	# patch the buffer size for handling the save state snapshot image
 	# \x0c (768k) would be enough up to cores displaying at 640x480x2
-	printf "\x0c" | dd of=bisrv.asd bs=1 seek=$$((0x34f8b8)) conv=notrunc
+	# printf "\x0c" | dd of=bisrv.asd bs=1 seek=$$((0x34f8b8)) conv=notrunc
+
+	# allow spurious interrupts to avoid the boot loop
+	printf "\x22\x00\x00\x10" | dd of=bisrv.asd bs=1 seek=$$((0x342358)) conv=notrunc
 
 	$(Q)./crc bisrv.asd
 
